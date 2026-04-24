@@ -27,9 +27,12 @@ st.title("📊 Painel EJA - Análise Livre")
 # --- ÁREA DE UPLOAD ---
 with st.expander("⬆️ Alimentar Base de Dados"):
     novo_arquivo = st.file_uploader("Suba o CSV com os dados", type=['csv'])
+    
+    # Adicionamos um botão. O salvamento só ocorre no momento do clique.
     if novo_arquivo:
-        salvar_dados(pd.read_csv(novo_arquivo))
-        st.success("Dados integrados à base principal com sucesso!")
+        if st.button("Confirmar e Salvar Dados"):
+            salvar_dados(pd.read_csv(novo_arquivo))
+            st.success("Dados integrados à base principal com sucesso!")
 
 # --- ÁREA DE TESTES E CONFIGURAÇÕES ---
 st.sidebar.divider()
