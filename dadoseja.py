@@ -116,3 +116,15 @@ if os.path.exists(ARQUIVO_PRINCIPAL):
 
 else:
     st.info("Nenhum dado no sistema. Faça o upload do primeiro arquivo CSV.")
+
+# --- RODAPÉ EM TEXTO DISCRETO ---
+rodape_html = """
+    <div style="text-align: center; color: #888888; font-size: 12px; margin-top: 30px; padding-bottom: 20px;">
+        <p style="margin: 0; line-height: 1.4;">
+            <b>💻Desenvolvido por Edson Ferreira - 2026</b><br>           
+             Estudante de Análise e Desenvolvimento de Sistemas - PUCPR<br>
+            📧 edsonferreira.dev@gmail.com
+        </p>
+    </div>
+    """
+st.markdown(rodape_html, unsafe_allow_html=True)
