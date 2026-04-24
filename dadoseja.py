@@ -22,7 +22,7 @@ def salvar_dados(novo_df):
     else:
         novo_df.to_csv(ARQUIVO_PRINCIPAL, index=False)
 
-st.title("📊 Painel EJA - Análise Livre")
+st.title("📊 Painel de Dados - Programa EJAEPT - IFF")
 
 # --- ÁREA DE UPLOAD ---
 with st.expander("⬆️ Alimentar Base de Dados"):
