@@ -11,6 +11,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
+from streamlit_gsheets import GSheetsConnection
 
 ARQUIVO_PRINCIPAL = 'dados_eja_completo.csv'
 st.set_page_config(page_title="Dashboard EJA IFF Livre", layout="wide")
