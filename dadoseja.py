@@ -20,18 +20,22 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # ==========================================
 def ler_dados_nuvem():
     try:
-        df = conn.read(spreadsheet=URL_PLANILHA, worksheet="Página1")
-        return df.dropna(how='all') # Remove linhas 100% vazias
+        # ttl=0 obriga o Streamlit a buscar o dado real agora, ignorando a memória
+        df = conn.read(spreadsheet=URL_PLANILHA, worksheet="Página1", ttl=0)
+        return df.dropna(how='all') 
     except:
         return pd.DataFrame()
 
 def salvar_dados_nuvem(df_novo):
     df_atual = ler_dados_nuvem()
+    
     if not df_atual.empty:
         df_consolidado = pd.concat([df_atual, df_novo], ignore_index=True)
     else:
         df_consolidado = df_novo
+        
     conn.update(spreadsheet=URL_PLANILHA, worksheet="Página1", data=df_consolidado)
+    st.cache_data.clear() # Limpa o cache imediatamente após salvar
 
 def apagar_dados_nuvem():
     # Substitui a planilha por um DataFrame vazio para resetar
