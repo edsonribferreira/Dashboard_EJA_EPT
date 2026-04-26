@@ -45,7 +45,7 @@ def apagar_dados_nuvem():
 # ==========================================
 # 3. INTERFACE PRINCIPAL
 # ==========================================
-st.title("📊 Painel de Dados - Programa EJAEPT - IFF")
+st.title("Painel de Dados - Programa EJAEPT - IFF")
 
 # --- ÁREA DE UPLOAD E MAPEAMENTO ---
 with st.expander("⬆️ Alimentar Base de Dados"):
@@ -55,7 +55,7 @@ with st.expander("⬆️ Alimentar Base de Dados"):
         df_temp = pd.read_csv(novo_arquivo)
         colunas_csv = list(df_temp.columns)
         
-        st.write("### ⚙️ Mapeamento de Colunas")
+        st.write("### Mapeamento de Colunas")
         st.info("Verifique se o sistema conectou as colunas do seu arquivo corretamente:")
         
         colunas_obrigatorias = ['nome_estudante', 'curso', 'campus', 'municipio', 'bairro', 'etnia', 'renda', 'sexo']
@@ -102,14 +102,6 @@ with st.expander("⬆️ Alimentar Base de Dados"):
             salvar_dados_nuvem(df_final)
             st.success("✅ Dados padronizados e salvos permanentemente no Google Sheets!")
 
-# --- ZONA DE TESTES ---
-st.sidebar.divider()
-st.sidebar.subheader("⚙️ Zona de Testes")
-
-if st.sidebar.button("🗑️ Apagar Base de Dados (Reset)"):
-    apagar_dados_nuvem()
-    st.sidebar.success("Base de dados limpa com sucesso!")
-    st.rerun()
 
 # ==========================================
 # 4. DASHBOARD / GRÁFICOS
@@ -119,7 +111,7 @@ df = ler_dados_nuvem()
 if not df.empty:
     colunas_analise = [col for col in df.columns if col not in ['nome_estudante']]
 
-    st.sidebar.header("🔍 Filtros Globais")
+    st.sidebar.header("Filtros Globais")
     st.sidebar.write("Filtre a base antes de gerar o gráfico:")
     df_filtrado = df.copy()
 
@@ -129,7 +121,7 @@ if not df.empty:
         if selecao:
             df_filtrado = df_filtrado[df_filtrado[col].isin(selecao)]
 
-    st.header("🛠️ Construtor de Gráficos")
+    st.header("Construtor de Gráficos")
 
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -137,7 +129,7 @@ if not df.empty:
     with c2:
         divisao_cor = st.selectbox("2. Cruzar com (Subdivisão/Cor):", ['Nenhum'] + colunas_analise)
     with c3:
-        tipo_grafico = st.selectbox("3. Tipo de Gráfico:", ["Barras Agrupadas", "Barras Empilhadas", "Pizza / Donut"])
+        tipo_grafico = st.selectbox("3. Tipo de Gráfico:", ["Barras Agrupadas", "Barras Empilhadas", "Dispersão", "Pizza / Donut"])
 
     st.divider()
 
@@ -153,6 +145,8 @@ if not df.empty:
                 fig = px.bar(df_agrupado, x=eixo_x, y='Quantidade', color=divisao_cor, barmode='group')
             elif tipo_grafico == "Barras Empilhadas":
                 fig = px.bar(df_agrupado, x=eixo_x, y='Quantidade', color=divisao_cor)
+            elif tipo_grafico == "Dispersão":
+                fig = px.scatter(df_agrupado, x=eixo_x, y='Quantidade', color=divisao_cor, size='Quantidade')
             else: 
                 fig = px.sunburst(df_agrupado, path=[eixo_x, divisao_cor], values='Quantidade')
         else:
