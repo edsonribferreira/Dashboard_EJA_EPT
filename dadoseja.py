@@ -28,11 +28,62 @@ st.title("📊 Painel de Dados - Programa EJAEPT - IFF")
 with st.expander("⬆️ Alimentar Base de Dados"):
     novo_arquivo = st.file_uploader("Suba o CSV com os dados", type=['csv'])
     
-    # Adicionamos um botão. O salvamento só ocorre no momento do clique.
     if novo_arquivo:
-        if st.button("Confirmar e Salvar Dados"):
-            salvar_dados(pd.read_csv(novo_arquivo))
-            st.success("Dados integrados à base principal com sucesso!")
+        df_temp = pd.read_csv(novo_arquivo)
+        colunas_csv = list(df_temp.columns)
+        
+        st.write("### ⚙️ Mapeamento de Colunas")
+        st.info("Verifique se o sistema conectou as colunas do seu arquivo corretamente:")
+        
+        # Colunas que o seu dashboard exige
+        colunas_obrigatorias = ['nome_estudante', 'curso', 'campus', 'municipio', 'bairro', 'etnia', 'renda', 'sexo']
+        
+        # Função para tentar adivinhar a coluna baseada em palavras-chave
+        def adivinhar_coluna(padrao, col_disponiveis):
+            dicas = {
+                'nome_estudante': ['nome', 'aluno', 'completo'], 'curso': ['curso'], 'campus': ['campus', 'polo'],
+                'municipio': ['município', 'cidade'], 'bairro': ['bairro'], 'etnia': ['etnia', 'cor', 'raça'],
+                'renda': ['renda'], 'sexo': ['sexo', 'gênero']
+            }
+            for col in col_disponiveis:
+                if any(dica in col.lower() for dica in dicas.get(padrao, [])):
+                    return col
+            return "❌ Não existe no arquivo"
+
+        mapa_colunas = {}
+        valores_padrao = {}
+        
+        # Cria a interface de mapeamento
+        for col_padrao in colunas_obrigatorias:
+            opcoes = ["❌ Não existe no arquivo"] + colunas_csv
+            palpite = adivinhar_coluna(col_padrao, colunas_csv)
+            
+            c1, c2 = st.columns([1, 1])
+            with c1:
+                # O usuário escolhe qual coluna do CSV corresponde à coluna do Dashboard
+                escolha = st.selectbox(f"Coluna para **{col_padrao.upper()}**:", options=opcoes, index=opcoes.index(palpite))
+                mapa_colunas[col_padrao] = escolha
+            
+            with c2:
+                # Se não existir (ex: curso e campus), abre um campo para digitar o valor fixo
+                if escolha == "❌ Não existe no arquivo":
+                    valores_padrao[col_padrao] = st.text_input(f"Digite o valor para todas as linhas:", key=f"txt_{col_padrao}", placeholder="Ex: Libras")
+                else:
+                    st.write("") # Apenas para alinhar o layout
+                    
+        if st.button("Confirmar Mapeamento e Salvar Dados"):
+            df_final = pd.DataFrame()
+            
+            # Monta a tabela final padronizada baseada nas escolhas
+            for col_padrao in colunas_obrigatorias:
+                escolha = mapa_colunas[col_padrao]
+                if escolha == "❌ Não existe no arquivo":
+                    df_final[col_padrao] = valores_padrao.get(col_padrao, "Não Informado")
+                else:
+                    df_final[col_padrao] = df_temp[escolha]
+                    
+            salvar_dados(df_final)
+            st.success("Dados padronizados e integrados à base principal com sucesso!")
 
 # --- ÁREA DE TESTES E CONFIGURAÇÕES ---
 st.sidebar.divider()
