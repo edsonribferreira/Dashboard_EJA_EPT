@@ -9,7 +9,6 @@ from streamlit_gsheets import GSheetsConnection
 # ==========================================
 st.set_page_config(page_title="Painel EJA-EPT - IFF", layout="wide")
 
-# COLE AQUI O LINK DA SUA PLANILHA (Criada no e-mail pessoal)
 URL_PLANILHA = "https://docs.google.com/spreadsheets/d/1L_78f9AnCi2a5se7nwc0Qe4RVmNjb5Aznykb74lF3A0/edit?usp=sharing"
 
 # Estabelece a conexão com os "Secrets" do Streamlit
